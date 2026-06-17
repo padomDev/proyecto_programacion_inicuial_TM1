@@ -101,3 +101,8 @@ def menu_pregunta(pregunta):
             print("Se debe ingresar una letra mayuscula de la A a la D")
 
 menu_ingreso()
+
+#python -m venv venv
+#venv\Scripts\activate
+#python -m pip install pyinstaller
+#pyinstaller --onefile menues.py
