@@ -1,5 +1,4 @@
-#   Librerias importadas
-import random
+from seguridad import *
 
 #   Lista de usuarios registrados.
 usuarios = []
@@ -13,6 +12,37 @@ salts = []
 #   Acumulador de mensajes de error para retornar al usuario.
 mensaje_error = []
 
+#   Carga los usuarios guardados en auth.txt a las listas en memoria.
+def cargar_usuarios_desde_archivo():
+    try:
+        #   Abre el archivo "auth.txt".
+        with open("auth.txt", "r", encoding="utf-8") as archivo:
+            #   Lee cada linea del archivo.
+            for linea in archivo:
+                #   Crea un array "datos" y guarda los datos del usuario serparados por una barra recta.
+                datos = linea.strip().split("|")
+
+                #   Guada los datos del usuario en varibles separadas.
+                usuario = datos[0]
+                contraseña_hasheada = datos[1]
+                salt = datos[2]
+
+                #   Agrega sus datos a las variables locales.
+                usuarios.append(usuario)
+                contraseñas_hasheadas.append(contraseña_hasheada)
+                salts.append(salt)
+
+    #   Si no encuentra el archivo creado, lo crea y lo cierra.
+    except FileNotFoundError:
+        archivo = open("auth.txt", "w", encoding="utf-8")
+        archivo.close()
+    
+
+#   Guarda un usuario nuevo en auth.txt.
+def guardar_usuario_en_archivo(usuario, contraseña_hasheada, salt):
+    with open("auth.txt", "a", encoding="utf-8") as archivo:
+        archivo.write(f"{usuario}|{contraseña_hasheada}|{salt}\n")
+
 #   Funcion que sirve para validar las credenciales ingresadas por el usuario para su registro.
 def validaciones_registro(
     usuario, 
@@ -23,7 +53,7 @@ def validaciones_registro(
     ):
 
     #   Valida que el nombre de usuario no se encuentre ya registrado.
-    if usuario is usuarios:
+    if usuario in usuarios:
         mensaje_error.append("Este nombnre de usuario ya esta registrado")
 
     #   Valida que el nombre de usuario tenga entre 6 y 50 caracteres.
@@ -69,6 +99,7 @@ def validaciones_registro(
         contraseña_hasheada = hash_casero_16_bytes(contraseña)
         contraseñas_hasheadas.append(contraseña_hasheada[0])
         salts.append(contraseña_hasheada[1])
+        guardar_usuario_en_archivo(usuario, contraseña_hasheada[0], contraseña_hasheada[1])
         return True
 
 #   Funcion para validar ingreso.
@@ -116,6 +147,7 @@ def buscar_usuario(
     posicion
     ):
 
+
     #   Si la posicion brindada es mayor al numero maximo de posiciones en la lista, le resta 1.
     if posicion >= len(lista):
         return -1
@@ -130,67 +162,6 @@ def buscar_usuario(
         usuario_buscado, 
         posicion + 1
         )
-
-#   Esta funcion sirve para generar un cadena de 16 caracteres al azar
-def salt_casero(largo=16):
-    caracteres = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-    salt = ""
-
-    #   Realiza 16 iteraciones sobre la lista de caracteres y en cada una guarda uno al azar.
-    for i in range(largo):
-        posicion = random.randint(0, len(caracteres) - 1)
-        salt += caracteres[posicion]
-
-    return salt
-
-#   Esta funcion sirve para convertir la contraseña que ingresa el usuario en 
-def hash_casero_16_bytes(contraseña):
-
-    #   
-    salt = salt_casero()
-
-    #   Crea una lista de 16 números usando el salt
-    hash_bytes = []
-
-    for caracter in salt:
-        hash_bytes.append(ord(caracter) % 256)
-
-    for i, caracter in enumerate(contraseña):
-        numero = ord(caracter)
-
-        for j in range(16):
-            numero_salt = ord(salt[j])
-            hash_bytes[j] = (
-                hash_bytes[j] *  71
-                + numero * (j+1)
-                + numero_salt * (j+1)
-                + i * 17
-                + j * 13
-            )%256
-    return bytes(hash_bytes).hex(), salt
-
-def hash_casero_16_bytes_login(contraseña, salt):
-
-    #   Crea una lista de 16 números usando el salt
-    hash_bytes = []
-
-    for caracter in salt:
-        hash_bytes.append(ord(caracter) % 256)
-
-    for i, caracter in enumerate(contraseña):
-        numero = ord(caracter)
-
-        for j in range(16):
-            numero_salt = ord(salt[j])
-            hash_bytes[j] = (
-                hash_bytes[j] *  71
-                + numero * (j+1)
-                + numero_salt * (j+1)
-                + i * 17
-                + j * 13
-            )%256
-    return bytes(hash_bytes).hex(), salt
-
 
 def elegir_pregunta():
 
@@ -236,4 +207,5 @@ def elegir_pregunta():
 
     return pregunta_actual
 
-
+#   Cuadno se carga servicios.py, se carga la lista de usuarios del archivo "auth.txt".
+cargar_usuarios_desde_archivo()

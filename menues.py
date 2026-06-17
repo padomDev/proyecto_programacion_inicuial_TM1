@@ -1,4 +1,4 @@
-from servicios import *
+from validaciones import *
 
 def menu_ingreso():
 
@@ -7,6 +7,7 @@ def menu_ingreso():
         print("-------------------------------------------------------------------")
         print("                           1. Registrarse                 ")
         print("                            2. Loguarse                   ")
+        print("                             3. Salir                 ")
         print("-------------------------------------------------------------------")
 
         try:
@@ -20,7 +21,7 @@ def menu_ingreso():
                     print("-------------------------------------------------------------------")
                     contraseña = input("                        Ingrese contraseña: ")
                     print("-------------------------------------------------------------------")
-                    confirm_contraseña = input("                Ingrese nuevamente la contraseña: ")
+                    confirm_contraseña = input("                      Ingrese nuevamente la contraseña: ")
                     print("-------------------------------------------------------------------")
                     pregunta = elegir_pregunta()
                     respuesta = menu_pregunta(pregunta)
@@ -35,14 +36,15 @@ def menu_ingreso():
                     if registro != True:    
                         for mensaje in registro:
                             print(mensaje)
-                            menu_ingreso()
+                        menu_ingreso()
                     else:
-                        print("Registro realizado con exito, bienvenido al club")
-                        menu_principal()
+                        print(f"        Registro realizado con exito, bienvenido al club, {usuario}")
 
                 case 2 :
-                    usuario = input("Ingrese nombre de usuario: ")
-                    contraseña = input("Ingrese contraseña: ")
+                    usuario = input("                     Ingrese nombre de usuario: ")
+                    print("-------------------------------------------------------------------")
+                    contraseña = input("                        Ingrese contraseña: ")
+                    print("-------------------------------------------------------------------")
                     pregunta = elegir_pregunta()
                     respuesta = menu_pregunta(pregunta)
                     logueo = validaciones_login(
@@ -54,13 +56,17 @@ def menu_ingreso():
                     if logueo != True:    
                         for mensaje in registro:
                             print(mensaje)
-                            menu_ingreso()
+                        menu_ingreso()
                     else:
-                        print("Login realizado con exito, bienvenido al club")
-                        menu_principal()
+                        print(f"         Login realizado con exito, bienvenido al club, {usuario}")
+                
+                case 3 :
+                    return
 
                 case _ :
+                    print("-------------------------------------------------------------------")
                     print("Opcion invalida")
+                    print("-------------------------------------------------------------------")
 
         except ValueError:
             print("El valor ingresado debe ser un número")
@@ -71,7 +77,7 @@ def menu_pregunta(pregunta):
 
     while True:
 
-        print("         ", pregunta["pregunta"])
+        print("                 ", pregunta["pregunta"])
         print("-------------------------------------------------------------------")
         print(pregunta["opcion 1"])
         print(pregunta["opcion 2"])
@@ -81,7 +87,7 @@ def menu_pregunta(pregunta):
 
         try:
 
-            respuesta = str(input("                 Ingrese una respuesta: "))
+            respuesta = str(input("                     Ingrese una respuesta: "))
 
             if respuesta not in ["A", "B", "C", "D"]:
                 print("-------------------------------------------------------------------")
@@ -94,9 +100,4 @@ def menu_pregunta(pregunta):
         except ValueError:
             print("Se debe ingresar una letra mayuscula de la A a la D")
 
-def menu_principal():
-
-    while True:
-
-        print("-------------------------------------------------------------------")
-
+menu_ingreso()
