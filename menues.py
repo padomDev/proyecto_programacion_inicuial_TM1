@@ -54,7 +54,7 @@ def menu_ingreso():
                         respuesta
                         )
                     if logueo != True:    
-                        for mensaje in registro:
+                        for mensaje in logueo:
                             print(mensaje)
                         menu_ingreso()
                     else:
